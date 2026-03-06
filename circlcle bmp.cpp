@@ -27,7 +27,7 @@ struct BMPInfoHeader {
 };
 #pragma pack(pop)
 
-void header_data(std::vector<uint8_t>(& data), int w, int h) {
+void write_bmp_header(std::vector<uint8_t>(& data), int w, int h) {
     // Each row must be a multiple of 4 bytes
     int row_stride = w * 3;
     int padded_row_size = ((row_stride + 3) / 4) * 4;
@@ -48,20 +48,20 @@ void header_data(std::vector<uint8_t>(& data), int w, int h) {
     }
 
     //use the pointer pointing to the first raw byte of info_header
-    ptrPixel = reinterpret_cast<uint8_t*>(&info_header);;
+    ptrPixel = reinterpret_cast<uint8_t*>(&info_header);
     //store the bytes to vector
     for (int i = 0; i < 40; i++) {
         data.push_back(*(ptrPixel + i));
     }
 }
 
-void pixel_data_calculate(std::vector<uint8_t>(&data), int width, int height) {
+void write_pixel_data(std::vector<uint8_t>(&data), int width, int height) {
     int row_size = width * 3;
     int row_padding = (4 - (row_size % 4)) % 4;
 
-    //Loop over the columns
+    //Loop over the rows
     for (int x = 0; x < width; x++) {
-        //loop over the rows
+        //loop over the colums
         for (int y = 0; y < height; y++) {
 
             //pixel in BGR format
@@ -104,17 +104,17 @@ void saveBitmap(std::vector<uint8_t>& data) {
 
 
 int main() {
-    int width = 100;
+    int width =100;
     int height = 100;
 
     //vector to store raw pixel data
     std::vector<uint8_t> pixel_data;
 
     //get data from header file
-    header_data(pixel_data, width, height);
+    write_bmp_header(pixel_data, width, height);
 
     //calculate pixel data
-    pixel_data_calculate(pixel_data, width, height);
+    write_pixel_data(pixel_data, width, height);
 
     //create circle
     saveBitmap(pixel_data);
